@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Tính Điểm KPI & Xuất Báo Cáo Phụ Lục 2, 3</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --border: #aaa;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 15px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            text-align: center;
+            color: #1a252f;
+        }
+        .container {
+            max-width: 1600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .author-info {
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .author-info strong {
+            color: #0d47a1;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #fff;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            background: #e9ecef;
+            padding: 8px 12px;
+            margin-top: 0;
+            border-left: 4px solid var(--primary);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+        th, td {
+            border: 1px solid #777;
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f0f4f8;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
+            font-size: 11px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        button:hover { background-color: #004085; }
+        .btn-add { background-color: #28a745; margin-top: 10px; }
+        .btn-add:hover { background-color: #218838; }
+        .btn-delete { background-color: #dc3545; padding: 2px 6px; font-size: 10px; }
+        .btn-delete:hover { background-color: #c82333; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff; margin: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+            .page-break { page-break-before: always; }
+            .author-footer { display: block !important; margin-top: 30px; font-size: 11px; font-style: italic; text-align: right; }
+        }
+        .author-footer { display: none; }
+        
+        .result-box {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .flex-row { display: flex; gap: 15px; }
+        .flex-row > div { flex: 1; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- KHU VỰC THÔNG TIN BẢN QUYỀN TÁC GIẢ -->
+    <div class="author-info no-print">
+        <strong>BẢN QUYỀN TÁC GIẢ: THẦY BÙI KIM TUYẾN</strong><br>
+        Hiệu trưởng Trường Tiểu học và Trung học cơ sở Mai Lạp<br>
+        <i>Chuyên môn: Văn bằng 1 Cử nhân sư phạm Toán. văn bằng 2 Cử nhân chuyên ngành SP Tin học</i><br>
+        Điện thoại: <strong>0947.523.921</strong> | Địa chỉ: <strong>Xã Thanh Mai, tỉnh Thái Nguyên</strong>
+    </div>
+
+    <h1>HỆ THỐNG TÍNH ĐIỂM KPI & XUẤT BÁO CÁO</h1>
+
+    <!-- THÔNG TIN CÁ NHÂN -->
+    <div class="section no-print">
+        <div class="section-title">THÔNG TIN CÁ NHÂN</div>
+        <div class="flex-row">
+            <div>
+                <label>Họ và tên:</label> <input type="text" id="info_name" value="Nguyễn Văn A">
+                <label>Chức vụ Đảng:</label> <input type="text" id="info_party" value="Bí thư Chi bộ">
+                <label>Chức vụ chính quyền:</label> <input type="text" id="info_gov" value="Hiệu trưởng">
+            </div>
+            <div>
+                <label>Quý/Năm:</label> <input type="text" id="info_period" value="Quý II/2026">
+                <label>Đơn vị công tác:</label> <input type="text" id="info_unit" value="UBND xã Thanh Mai">
+                <label>Chức vụ đoàn thể:</label> <input type="text" id="info_org" value="Đoàn viên">
+            </div>
+        </div>
+    </div>
+
+    <!-- TIÊU CHÍ CHUNG (30 ĐIỂM) -->
+    <div class="section no-print">
+        <div class="section-title">A. NHÓM TIÊU CHÍ CHUNG (Tối đa 30 điểm)[cite: 2, 3]</div>
+        <label><input type="checkbox" class="tc-gen" value="18" checked onchange="calculateAll()"> 1. Phẩm chất chính trị, đạo đức, lối sống, trách nhiệm nêu gương (Tối đa 18đ)</label><br>
+        <label><input type="checkbox" class="tc-gen" value="4" checked onchange="calculateAll()"> 2. Tư duy đổi mới, chiến lược, khát vọng cống hiến (Tối đa 4đ)</label><br>
+        <label><input type="checkbox" class="tc-gen" value="8" checked onchange="calculateAll()"> 3. Tự phê bình và phê bình, tự soi, tự sửa (Tối đa 8đ)</label>
+        <div style="margin-top:8px;"><strong>Tổng điểm tiêu chí chung: <span id="score_general">30</span>/30 điểm</strong></div>
+    </div>
+
+    <!-- B. NHẬP DANH MỤC CÔNG VIỆC -->
+    <div class="section no-print">
+        <div class="section-title">B. NHẬP DANH MỤC CÔNG VIỆC VÀ KẾT QUẢ THỰC HIỆN</div>
+        <p><i>Lưu ý: Tích chọn ở cột "Tích chuẩn" để chọn Đơn vị công việc chuẩn. Hệ số quy đổi = (Điểm công việc / Điểm chuẩn), lấy 1 chữ số thập phân[cite: 1].</i></p>
+        
+        <table id="taskInputTable">
+            <thead>
+                <tr>
+                    <th style="width: 25px;">STT</th>
+                    <th>Nội dung nhiệm vụ</th>
+                    <th style="width: 65px;">Cấp trình</th>
+                    <th style="width: 100px;">Độ khó, mới...</th>
+                    <th style="width: 65px;">Sản phẩm</th>
+                    <th style="width: 65px;">Tiến độ</th>
+                    <th style="width: 35px;">Tích chuẩn</th>
+                    <th style="width: 45px;">Điểm tối đa</th>
+                    <th style="width: 40px;">Hệ số quy đổi</th>
+                    <th style="width: 40px;">Số lượng KH</th>
+                    <th style="width: 40px;">Thực tế hoàn thành</th>
+                    <th style="width: 40px;">NV KHÔNG sai sót</th>
+                    <th style="width: 40px;">NV CÓ sai sót (Tự tính)</th>
+                    <th style="width: 40px;">Số lần làm lại</th>
+                    <th style="width: 40px;">ĐÚNG tiến độ</th>
+                    <th style="width: 40px;">CHẬM tiến độ (Tự tính)</th>
+                    <th style="width: 40px;">Số lần chậm tiến độ</th>
+                    <th style="width: 40px;">Trục (PL3)</th>
+                    <th style="width: 30px;">Xóa</th>
+                </tr>
+            </thead>
+            <tbody id="taskInputBody"></tbody>
+        </table>
+        <button class="btn-add" onclick="addTaskRow()">+ Thêm công việc</button>
+    </div>
+
+    <!-- C. ĐÁNH GIÁ NĂNG LỰC LÃNH ĐẠO -->
+    <div class="section no-print">
+        <div class="section-title">C. ĐÁNH GIÁ NĂNG LỰC LÃNH ĐẠO, CHỈ ĐẠO, ĐIỀU HÀNH (TRỤC D)[cite: 2]</div>
+        <table style="width: 100%; text-align: left;">
+            <tr>
+                <td style="width:350px;">a) Kết quả hoạt động cơ quan, đơn vị:</td>
+                <td>
+                    <select id="lead_a" onchange="calculateAll()">
+                        <option value="100">100% - 100% công chức đạt Hoàn thành nhiệm vụ trở lên</option>
+                        <option value="50">50% - Có công chức Không hoàn thành nhiệm vụ</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>b) Khả năng tổ chức triển khai thực hiện nhiệm vụ:</td>
+                <td>
+                    <select id="lead_b" onchange="calculateAll()">
+                        <option value="100">100% - Hoàn thành đầy đủ, đúng hạn, chất lượng, có sáng kiến</option>
+                        <option value="50">50% - Trong kỳ có tồn tại, hạn chế, chậm trễ kéo dài</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>c) Năng lực tập hợp, đoàn kết nội bộ:</td>
+                <td>
+                    <select id="lead_c" onchange="calculateAll()">
+                        <option value="100">100% - Môi trường làm việc đoàn kết, phối hợp hiệu quả</option>
+                        <option value="50">50% - Có phản ánh, khiếu nại mâu thuẫn kéo dài</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <div style="margin-top: 10px;">
+            <strong>Điểm Trục D (Lãnh đạo, chỉ đạo): <span id="score_D">100</span>%</strong>
+        </div>
+    </div>
+
+    <div class="no-print" style="text-align: center; margin: 20px 0;">
+        <button onclick="window.print()" style="font-size: 15px; padding: 10px 25px;">🖨️ In / Xuất Báo Cáo Phụ Lục 2 & Phụ Lục 3</button>
+    </div>
+
+    <!-- TỔNG HỢP KẾT QUẢ -->
+    <div class="result-box no-print">
+        <h3>KẾT QUẢ TÍNH ĐIỂM KPI TỔNG HỢP</h3>
+        <p>A (Số lượng): <strong><span id="score_A">0</span>%</strong> | B (Chất lượng): <strong><span id="score_B">0</span>%</strong> | C (Tiến độ): <strong><span id="score_C">0</span>%</strong> | D (Lãnh đạo): <strong><span id="score_D_val">0</span>%</strong>[cite: 2]</p>
+        <p>Điểm KPI Trung bình = (A + B + C + D) / 4 = <strong><span id="score_KPI_avg">0</span>%</strong>[cite: 2]</p>
+        <p>Điểm Kết quả thực hiện nhiệm vụ (70%): <strong><span id="score_task_70">0</span> / 70 điểm</strong>[cite: 2]</p>
+        <p>TỔNG ĐIỂM ĐÁNH GIÁ (Chung 30% + Nhiệm vụ 70%): <strong style="font-size: 1.3em; color: #d9534f;"><span id="score_TOTAL">0</span> / 100 điểm</strong>[cite: 2]</p>
+    </div>
+
+    <!-- ==================== KHU VỰC IN PHỤ LỤC 2 ==================== -->
+    <div class="page-break"></div>
+    <div class="section">
+        <h2>PHỤ LỤC 2: BẢNG CHẤM ĐIỂM KẾT QUẢ THỰC HIỆN NHIỆM VỤ (KPI)[cite: 2]</h2>
+        
+        <h3>Bảng 1. Danh mục sản phẩm công việc[cite: 2]</h3>
+        <table id="p2_table1">
+            <thead>
+                <tr>
+                    <th style="width:30px;">STT</th>
+                    <th>Nhiệm vụ theo Quý</th>
+                    <th>Cấp trình</th>
+                    <th>Độ khó, mới, phức tạp; phạm vi tác động</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Tiến độ</th>
+                    <th>Ghi chú</th>
+                    <th>Điểm chấm công việc</th>
+                    <th>Hệ số quy đổi</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3>Bảng 2. Cách tính điểm số lượng (A)[cite: 2]</h3>
+        <table id="p2_table2">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width:30px;">STT<br>(1)</th>
+                    <th rowspan="2">Nội dung nhiệm vụ<br>(2)</th>
+                    <th rowspan="2">Sản phẩm/công việc<br>(3)</th>
+                    <th colspan="4">Nhiệm vụ đề ra theo Kế hoạch</th>
+                    <th colspan="2">Thực tế triển khai</th>
+                </tr>
+                <tr>
+                    <th>Số lượng<br>(4)</th>
+                    <th>Tiến độ<br>(5)</th>
+                    <th>Hệ số quy đổi<br>(6)</th>
+                    <th>Số lượng quy đổi<br>(7) = (4)*(6)</th>
+                    <th>Thực tế hoàn thành<br>(8)</th>
+                    <th>Quy đổi<br>(9) = (6)*(8)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3>Bảng 3. Cách tính điểm chất lượng (B)[cite: 2]</h3>
+        <table id="p2_table3">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width:30px;">STT<br>(1)</th>
+                    <th rowspan="2">Nhiệm vụ<br>(2)</th>
+                    <th rowspan="2">Sản phẩm<br>(3)</th>
+                    <th colspan="4">Nhiệm vụ đề ra theo Kế hoạch</th>
+                    <th colspan="5">Thực tế triển khai</th>
+                </tr>
+                <tr>
+                    <th>Số lượng<br>(4)</th>
+                    <th>Tiến độ<br>(5)</th>
+                    <th>Hệ số quy đổi<br>(6)</th>
+                    <th>Số lượng quy đổi<br>(7) = (4)*(6)</th>
+                    <th></th>
+                    <th>Thực tế hoàn thành<br>(8)</th>
+                    <th>Thực tế hoàn thành quy đổi<br>(9) = (6)*(8)</th>
+                    <th>Số lần yêu cầu làm lại<br>(10)</th>
+                    <th>Số lượng hoàn thành thực tế đạt chất lượng quy đổi<br>(11) = (9)-(9)*(10)*25%</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3>Bảng 4. Cách tính điểm tiến độ (C)[cite: 2]</h3>
+        <table id="p2_table4">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width:30px;">STT<br>(1)</th>
+                    <th rowspan="2">Nhiệm vụ<br>(2)</th>
+                    <th rowspan="2">Sản phẩm<br>(3)</th>
+                    <th colspan="4">Nhiệm vụ đề ra theo Kế hoạch</th>
+                    <th colspan="5">Thực tế triển khai</th>
+                </tr>
+                <tr>
+                    <th>Số lượng<br>(4)</th>
+                    <th>Tiến độ<br>(5)</th>
+                    <th>Hệ số quy đổi<br>(6)</th>
+                    <th>Số lượng quy đổi<br>(7) = (4)*(6)</th>
+                    <th></th>
+                    <th>Thực tế hoàn thành<br>(8)</th>
+                    <th>Thực tế hoàn thành quy đổi<br>(9) = (6)*(8)</th>
+                    <th>Số lần chậm tiến độ<br>(10)</th>
+                    <th>Số lượng hoàn thành thực tế đạt tiến độ quy đổi<br>(11) = (9)-(9)*(10)*25%</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="author-footer">Tác giả phần mềm: Thầy Bùi Kim Tuyến - HT Trường TH&THCS Mai Lạp - ĐT: 0947.523.921</div>
+    </div>
+
+    <!-- ==================== KHU VỰC IN PHỤ LỤC 3 ==================== -->
+    <div class="page-break"></div>
+    <div class="section">
+        <h2>PHỤ LỤC 03: BẢN TỰ ĐÁNH GIÁ, XẾP LOẠI CỦA CÁ NHÂN[cite: 3]</h2>
+        <div style="display: flex; justify-content: space-between;">
+            <div><strong>CƠ QUAN, ĐƠN VỊ:</strong> <span class="out_unit"></span></div>
+            <div style="text-align: center;">
+                <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>Độc lập - Tự do - Hạnh phúc
+            </div>
+        </div>
+        <p style="text-align: center; font-weight: bold; font-size: 1.1em; margin-top: 15px;">
+            BẢN TỰ ĐÁNH GIÁ, XẾP LOẠI CỦA CÁ NHÂN<br>
+            <span class="out_period"></span>
+        </p>
+        <p>Họ và tên: <span class="out_name"></span></p>
+        <p>Chức vụ Đảng: <span class="out_party"></span></p>
+        <p>Chức vụ chính quyền: <span class="out_gov"></span></p>
+        <p>Chức vụ Đoàn thể: <span class="out_org"></span></p>
+        
+        <h3>I. Tự đánh giá kết quả thực hiện nhiệm vụ[cite: 3]</h3>
+        <h4>A. NHÓM TIÊU CHÍ CHUNG (30 ĐIỂM)[cite: 3]</h4>
+        <p>Điểm đạt: <strong><span id="p3_score_gen">30</span>/30 điểm</strong></p>
+
+        <h4>B. KẾT QUẢ THỰC HIỆN NHIỆM VỤ ĐƯỢC GIAO (70 ĐIỂM)[cite: 3]</h4>
+        <table id="p3_table_axes">
+            <thead>
+                <tr>
+                    <th>TT</th>
+                    <th>Trục tiêu chí</th>
+                    <th>Điểm KPI (%)</th>
+                    <th>Điểm tối đa</th>
+                    <th>Điểm đạt (= Điểm KPI x Điểm tối đa)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td style="text-align:left;">Trục (1) - THỰC HIỆN MỤC TIÊU PHÁT TRIỂN KINH TẾ - XÃ HỘI VÀ NHIỆM VỤ CHÍNH TRỊ ĐƯỢC GIAO</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>15</td>
+                    <td id="p3_axis1">0</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td style="text-align:left;">Trục (2) - HOÀN THIỆN THỂ CHẾ, ĐẨY MẠNH PHÂN CẤP, PHÂN QUYỀN GẮN VỚI KIỂM TRA, GIÁM SÁT</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>10</td>
+                    <td id="p3_axis2">0</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td style="text-align:left;">Trục (3) - THÚC ĐẨY PHÁT TRIỂN KHOA HỌC, CÔNG NGHỆ, ĐỔI MỚI SÁNG TẠO VÀ CHUYỂN ĐỔI SỐ</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>10</td>
+                    <td id="p3_axis3">0</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td style="text-align:left;">Trục (4) - XÂY DỰNG ĐẢNG VÀ HỆ THỐNG CHÍNH TRỊ TRONG SẠCH, VỮNG MẠNH; PHÒNG CHỐNG THAM NHŨNG</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>15</td>
+                    <td id="p3_axis4">0</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td style="text-align:left;">Trục (5) - PHÁT TRIỂN VĂN HÓA, CON NGƯỜI, BẢO ĐẢM AN SINH XÃ HỘI</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>10</td>
+                    <td id="p3_axis5">0</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td style="text-align:left;">Trục (6) - CỦNG CỐ QUỐC PHÒNG, AN NINH, NÂNG CAO HIỆU QUẢ ĐỐI NGOẠI</td>
+                    <td class="out_kpi_avg">0%</td>
+                    <td>10</td>
+                    <td id="p3_axis6">0</td>
+                </tr>
+                <tr style="font-weight: bold; background: #f0f0f0;">
+                    <td colspan="3">TỔNG (B) =[cite: 3]</td>
+                    <td>70</td>
+                    <td id="p3_total_B">0</td>
+                </tr>
+                <tr style="font-weight: bold; background: #e0e0e0;">
+                    <td colspan="3">TỔNG (A+B) =[cite: 3]</td>
+                    <td>100</td>
+                    <td id="p3_total_AB">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin-top:20px;"><strong>II. Tự đề xuất xếp loại mức chất lượng:</strong> <span id="p3_rank" style="font-weight:bold;"></span>[cite: 3]</p>
+
+        <div style="display: flex; margin-top: 30px; text-align: center;">
+            <div style="flex:1;"></div>
+            <div style="flex:1;">
+                <strong>CÁ NHÂN TỰ ĐÁNH GIÁ</strong><br>
+                <i>(Ký, ghi rõ họ tên)</i><br><br><br><br>
+                <span class="out_name"></span>
+            </div>
+        </div>
+        <div class="author-footer">Tác giả phần mềm: Thầy Bùi Kim Tuyến - HT Trường TH&THCS Mai Lạp - ĐT: 0947.523.921</div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu ban đầu
+    let tasks = [
+        { name: "Chỉ đạo xây dựng kế hoạch công tác hằng tháng của Ban Tổ chức Tỉnh ủy", level: "Lãnh đạo", complexity: "Nhiệm vụ thường xuyên", product: "Kế hoạch", schedule: "Hằng tháng", isStandard: true, maxScore: 100, planQty: 3, actualQty: 3, noErrorQty: 2, redoCount: 1, onTimeQty: 1, delayCount: 2, axis: 4 },
+        { name: "Thực hiện chế độ, chính sách tiền lương, phụ cấp khối đảng, MTTQ và các tổ chức CT-XH", level: "Lãnh đạo", complexity: "Nhiệm vụ thường xuyên", product: "Quyết định", schedule: "Hằng tháng", isStandard: false, maxScore: 100, planQty: 1, actualQty: 1, noErrorQty: 1, redoCount: 0, onTimeQty: 1, delayCount: 0, axis: 4 },
+        { name: "Chỉ đạo tham mưu công tác đánh giá định kỳ hằng quý đối với cán bộ lãnh đạo, quản lý", level: "Lãnh đạo", complexity: "Phức tạp, phạm vi rộng", product: "Hồ sơ đánh giá", schedule: "Hằng tháng", isStandard: false, maxScore: 150, planQty: 1, actualQty: 1, noErrorQty: 1, redoCount: 0, onTimeQty: 1, delayCount: 0, axis: 4 },
+        { name: "Chỉ đạo, tham mưu công tác tổ chức bộ máy", level: "Lãnh đạo", complexity: "Quan trọng, phức tạp", product: "Tờ trình; Hồ sơ công việc", schedule: "Hằng tháng", isStandard: false, maxScore: 250, planQty: 1, actualQty: 1, noErrorQty: 1, redoCount: 0, onTimeQty: 0, delayCount: 2, axis: 4 },
+        { name: "Hướng dẫn triển khai thực hiện Quy định đánh giá, xếp loại hằng tháng... gắn với KPI", level: "Thường trực", complexity: "Mới, phức tạp", product: "Tờ trình; Dự thảo Hướng dẫn", schedule: "Hằng tháng", isStandard: false, maxScore: 180, planQty: 1, actualQty: 1, noErrorQty: 0, redoCount: 2, onTimeQty: 0, delayCount: 1, axis: 4 }
+    ];
+
+    function getStandardScore() {
+        const stdTask = tasks.find(t => t.isStandard);
+        return stdTask ? stdTask.maxScore : 100;
+    }
+
+    function renderTaskInputTable() {
+        const tbody = document.getElementById('taskInputBody');
+        tbody.innerHTML = '';
+        const stdScore = getStandardScore();
+
+        tasks.forEach((task, index) => {
+            const tr = document.createElement('tr');
+            
+            const factor = Math.round((task.maxScore / stdScore) * 10) / 10;
+            task.factor = factor;
+
+            const hasErrorQty = Math.max(0, task.actualQty - task.noErrorQty);
+            const lateQty = Math.max(0, task.actualQty - task.onTimeQty);
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><input type="text" value="${task.name}" onchange="updateTask(${index}, 'name', this.value)"></td>
+                <td><input type="text" value="${task.level}" onchange="updateTask(${index}, 'level', this.value)"></td>
+                <td><input type="text" value="${task.complexity}" onchange="updateTask(${index}, 'complexity', this.value)"></td>
+                <td><input type="text" value="${task.product}" onchange="updateTask(${index}, 'product', this.value)"></td>
+                <td><input type="text" value="${task.schedule}" onchange="updateTask(${index}, 'schedule', this.value)"></td>
+                <td><input type="radio" name="standard_radio" ${task.isStandard ? 'checked' : ''} onchange="setStandardTask(${index})"></td>
+                <td><input type="number" value="${task.maxScore}" onchange="updateTask(${index}, 'maxScore', parseFloat(this.value))"></td>
+                <td style="background:#e9ecef; font-weight:bold;">${factor.toFixed(1)}</td>
+                <td><input type="number" value="${task.planQty}" onchange="updateTask(${index}, 'planQty', parseFloat(this.value))"></td>
+                <td><input type="number" value="${task.actualQty}" onchange="updateTask(${index}, 'actualQty', parseFloat(this.value))"></td>
+                <td><input type="number" value="${task.noErrorQty}" onchange="updateTask(${index}, 'noErrorQty', parseFloat(this.value))"></td>
+                <td style="background:#f8f9fa;"><strong>${hasErrorQty}</strong></td>
+                <td><input type="number" value="${task.redoCount}" onchange="updateTask(${index}, 'redoCount', parseFloat(this.value))"></td>
+                <td><input type="number" value="${task.onTimeQty}" onchange="updateTask(${index}, 'onTimeQty', parseFloat(this.value))"></td>
+                <td style="background:#f8f9fa;"><strong>${lateQty}</strong></td>
+                <td><input type="number" value="${task.delayCount}" onchange="updateTask(${index}, 'delayCount', parseFloat(this.value))"></td>
+                <td>
+                    <select onchange="updateTask(${index}, 'axis', parseInt(this.value))">
+                        <option value="1" ${task.axis===1?'selected':''}>T1</option>
+                        <option value="2" ${task.axis===2?'selected':''}>T2</option>
+                        <option value="3" ${task.axis===3?'selected':''}>T3</option>
+                        <option value="4" ${task.axis===4?'selected':''}>T4</option>
+                        <option value="5" ${task.axis===5?'selected':''}>T5</option>
+                        <option value="6" ${task.axis===6?'selected':''}>T6</option>
+                    </select>
+                </td>
+                <td><button class="btn-delete" onclick="removeTask(${index})">Xóa</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        calculateAll();
+    }
+
+    function addTaskRow() {
+        tasks.push({
+            name: "Nhiệm vụ mới", level: "Trực tiếp", complexity: "Thường xuyên", product: "Văn bản", schedule: "Hằng tháng",
+            isStandard: false, maxScore: 100, planQty: 1, actualQty: 1, noErrorQty: 1, redoCount: 0, onTimeQty: 1, delayCount: 0, axis: 1
+        });
+        renderTaskInputTable();
+    }
+
+    function removeTask(index) {
+        if(tasks.length <= 1) {
+            alert("Phải giữ lại ít nhất 01 công việc!");
+            return;
+        }
+        tasks.splice(index, 1);
+        renderTaskInputTable();
+    }
+
+    function setStandardTask(selectedIndex) {
+        tasks.forEach((t, i) => {
+            t.isStandard = (i === selectedIndex);
+        });
+        renderTaskInputTable();
+    }
+
+    function updateTask(index, field, value) {
+        tasks[index][field] = value;
+        if(field === 'noErrorQty' && value > tasks[index].actualQty) tasks[index].noErrorQty = tasks[index].actualQty;
+        if(field === 'onTimeQty' && value > tasks[index].actualQty) tasks[index].onTimeQty = tasks[index].actualQty;
+        renderTaskInputTable();
+    }
+
+    function calculateAll() {
+        // 1. Điểm Tiêu chí chung
+        let scoreGen = 0;
+        document.querySelectorAll('.tc-gen:checked').forEach(cb => scoreGen += parseFloat(cb.value));
+        document.getElementById('score_general').innerText = scoreGen;
+        document.getElementById('p3_score_gen').innerText = scoreGen;
+
+        // 2. Tính Điểm KPI Chi tiết
+        let totalPlanQty = 0;
+        let totalPlanConverted = 0;
+        let totalActualQty = 0;
+        let totalActualConverted = 0;
+
+        let totalQualGoodQty = 0;
+        let totalQualGoodConv = 0;
+        let totalQualErrQty = 0;
+        let totalQualErrConv = 0;
+        let totalRedoCount = 0;
+        let qualityNumerator = 0;
+
+        let totalProgOnTimeQty = 0;
+        let totalProgOnTimeConv = 0;
+        let totalProgLateQty = 0;
+        let totalProgLateConv = 0;
+        let totalDelayCount = 0;
+        let progressNumerator = 0;
+
+        let p2_b1_html = '', p2_b2_html = '', p2_b3_html = '', p2_b4_html = '';
+
+        tasks.forEach((t, i) => {
+            const stt = i + 1;
+            const factor = t.factor;
+            const planConv = t.planQty * factor;
+            const actualConv = t.actualQty * factor;
+
+            totalPlanQty += t.planQty;
+            totalPlanConverted += planConv;
+            totalActualQty += t.actualQty;
+            totalActualConverted += actualConv;
+
+            // Bảng 1 Phụ Lục 2[cite: 2]
+            p2_b1_html += `
+                <tr>
+                    <td>${stt}</td>
+                    <td style="text-align:left;">${t.name}</td>
+                    <td>${t.level}</td>
+                    <td>${t.complexity}</td>
+                    <td>${t.product}</td>
+                    <td>${t.planQty.toString().padStart(2, '0')}</td>
+                    <td>${t.schedule}</td>
+                    <td>${t.isStandard ? 'Lựa chọn làm công việc chuẩn' : ''}</td>
+                    <td>${t.maxScore}</td>
+                    <td>${factor.toFixed(1).replace('.', ',')}</td>
+                </tr>
+            `;
+
+            // Bảng 2 Phụ Lục 2[cite: 2]
+            p2_b2_html += `
+                <tr>
+                    <td>${stt}</td>
+                    <td style="text-align:left;">${t.name}</td>
+                    <td>${t.product}</td>
+                    <td>${t.planQty}</td>
+                    <td>${t.schedule}</td>
+                    <td>${factor.toFixed(1).replace('.', ',')}</td>
+                    <td>${planConv.toFixed(1).replace('.', ',')}</td>
+                    <td>${t.actualQty}</td>
+                    <td>${actualConv.toFixed(1).replace('.', ',')}</td>
+                </tr>
+            `;
+
+            // Bảng 3 Phụ Lục 2 (Chất lượng)[cite: 2]
+            const noErrQtyConv = t.noErrorQty * factor;
+            const hasErrQty = Math.max(0, t.actualQty - t.noErrorQty);
+            const hasErrQtyConv = hasErrQty * factor;
+
+            const qualGoodResult = noErrQtyConv; 
+            const qualErrResult = Math.max(0, hasErrQtyConv - (hasErrQtyConv * t.redoCount * 0.25));
+
+            totalQualGoodQty += t.noErrorQty;
+            totalQualGoodConv += noErrQtyConv;
+            totalQualErrQty += hasErrQty;
+            totalQualErrConv += hasErrQtyConv;
+            totalRedoCount += t.redoCount;
+            qualityNumerator += (qualGoodResult + qualErrResult);
+
+            p2_b3_html += `
+                <tr>
+                    <td rowspan="2">${stt}</td>
+                    <td rowspan="2" style="text-align:left;">${t.name}</td>
+                    <td rowspan="2">${t.product}</td>
+                    <td rowspan="2">${t.planQty}</td>
+                    <td rowspan="2">${t.schedule}</td>
+                    <td rowspan="2">${factor.toFixed(1).replace('.', ',')}</td>
+                    <td rowspan="2">${planConv.toFixed(1).replace('.', ',')}</td>
+                    <td style="text-align:left;">Nhiệm vụ không sai sót</td>
+                    <td>${t.noErrorQty}</td>
+                    <td>${noErrQtyConv.toFixed(1).replace('.', ',')}</td>
+                    <td>0</td>
+                    <td>${qualGoodResult.toFixed(2).replace('.', ',')}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;">Nhiệm vụ có sai sót</td>
+                    <td>${hasErrQty}</td>
+                    <td>${hasErrQtyConv.toFixed(1).replace('.', ',')}</td>
+                    <td>${t.redoCount}</td>
+                    <td>${qualErrResult.toFixed(2).replace('.', ',')}</td>
+                </tr>
+            `;
+
+            // Bảng 4 Phụ Lục 2 (Tiến độ)[cite: 2]
+            const onTimeConv = t.onTimeQty * factor;
+            const lateQty = Math.max(0, t.actualQty - t.onTimeQty);
+            const lateConv = lateQty * factor;
+
+            const progGoodResult = onTimeConv;
+            const progLateResult = Math.max(0, lateConv - (lateConv * t.delayCount * 0.25));
+
+            totalProgOnTimeQty += t.onTimeQty;
+            totalProgOnTimeConv += onTimeConv;
+            totalProgLateQty += lateQty;
+            totalProgLateConv += lateConv;
+            totalDelayCount += t.delayCount;
+            progressNumerator += (progGoodResult + progLateResult);
+
+            p2_b4_html += `
+                <tr>
+                    <td rowspan="2">${stt}</td>
+                    <td rowspan="2" style="text-align:left;">${t.name}</td>
+                    <td rowspan="2">${t.product}</td>
+                    <td rowspan="2">${t.planQty}</td>
+                    <td rowspan="2">${t.schedule}</td>
+                    <td rowspan="2">${factor.toFixed(1).replace('.', ',')}</td>
+                    <td rowspan="2">${planConv.toFixed(1).replace('.', ',')}</td>
+                    <td style="text-align:left;">Số việc đúng tiến độ</td>
+                    <td>${t.onTimeQty}</td>
+                    <td>${onTimeConv.toFixed(1).replace('.', ',')}</td>
+                    <td>0</td>
+                    <td>${progGoodResult.toFixed(2).replace('.', ',')}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;">Số việc chậm tiến độ</td>
+                    <td>${lateQty}</td>
+                    <td>${lateConv.toFixed(1).replace('.', ',')}</td>
+                    <td>${t.delayCount}</td>
+                    <td>${progLateResult.toFixed(2).replace('.', ',')}</td>
+                </tr>
+            `;
+        });
+
+        // Điểm A, B, C (%)[cite: 2]
+        const scoreA = totalPlanConverted > 0 ? Math.min(100, (totalActualConverted / totalPlanConverted) * 100) : 0;
+        const scoreB = totalPlanConverted > 0 ? (qualityNumerator / totalPlanConverted) * 100 : 0;
+        const scoreC = totalPlanConverted > 0 ? (progressNumerator / totalPlanConverted) * 100 : 0;
+
+        // Điểm D (Năng lực lãnh đạo)[cite: 2]
+        const leadA = parseFloat(document.getElementById('lead_a').value);
+        const leadB = parseFloat(document.getElementById('lead_b').value);
+        const leadC = parseFloat(document.getElementById('lead_c').value);
+        const scoreD = (leadA + leadB + leadC) / 3;
+
+        document.getElementById('score_D').innerText = scoreD.toFixed(1);
+        document.getElementById('score_D_val').innerText = scoreD.toFixed(1);
+
+        document.getElementById('score_A').innerText = scoreA.toFixed(1);
+        document.getElementById('score_B').innerText = scoreB.toFixed(1);
+        document.getElementById('score_C').innerText = scoreC.toFixed(1);
+
+        // Điểm KPI Trung bình = (A + B + C + D) / 4[cite: 2]
+        const scoreKPIAvg = (scoreA + scoreB + scoreC + scoreD) / 4;
+        document.getElementById('score_KPI_avg').innerText = scoreKPIAvg.toFixed(1);
+
+        // Quy đổi về thang 70 điểm[cite: 2]
+        const scoreTask70 = (scoreKPIAvg / 100) * 70;
+        document.getElementById('score_task_70').innerText = scoreTask70.toFixed(2);
+
+        // Tổng điểm chung (30% + 70%)[cite: 2]
+        const totalScore = scoreGen + scoreTask70;
+        document.getElementById('score_TOTAL').innerText = totalScore.toFixed(2);
+
+        // Đổ dữ liệu vào các Bảng Phụ Lục 2[cite: 2]
+        document.querySelector('#p2_table1 tbody').innerHTML = p2_b1_html;
+        
+        document.querySelector('#p2_table2 tbody').innerHTML = p2_b2_html + `
+            <tr style="font-weight:bold;">
+                <td colspan="3">Tổng</td>
+                <td>${totalPlanQty}</td>
+                <td></td>
+                <td></td>
+                <td>${totalPlanConverted.toFixed(1).replace('.', ',')}</td>
+                <td>${totalActualQty}</td>
+                <td>${totalActualConverted.toFixed(1).replace('.', ',')}</td>
+            </tr>
+            <tr>
+                <td colspan="9" style="text-align:left; font-weight:bold;">
+                    Điểm tỷ lệ (%) về số lượng kết quả thực hiện nhiệm vụ = (9)/(7) = ${scoreA.toFixed(1).replace('.', ',')}%
+                </td>
+            </tr>
+        `;
+
+        document.querySelector('#p2_table3 tbody').innerHTML = p2_b3_html + `
+            <tr style="font-weight:bold;">
+                <td rowspan="2" colspan="7">Tổng</td>
+                <td style="text-align:left;">Nhiệm vụ không sai sót</td>
+                <td>${totalQualGoodQty}</td>
+                <td>${totalQualGoodConv.toFixed(1).replace('.', ',')}</td>
+                <td>0</td>
+                <td>${totalQualGoodConv.toFixed(2).replace('.', ',')}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+                <td style="text-align:left;">Nhiệm vụ có sai sót</td>
+                <td>${totalQualErrQty}</td>
+                <td>${totalQualErrConv.toFixed(1).replace('.', ',')}</td>
+                <td>${totalRedoCount}</td>
+                <td>${(qualityNumerator - totalQualGoodConv).toFixed(2).replace('.', ',')}</td>
+            </tr>
+            <tr>
+                <td colspan="12" style="text-align:left; font-weight:bold;">
+                    Điểm tỷ lệ phần trăm (%) về chất lượng kết quả thực hiện nhiệm vụ = (11)/(7) = ${scoreB.toFixed(1).replace('.', ',')}%
+                </td>
+            </tr>
+        `;
+
+        document.querySelector('#p2_table4 tbody').innerHTML = p2_b4_html + `
+            <tr style="font-weight:bold;">
+                <td rowspan="2" colspan="7">Tổng</td>
+                <td style="text-align:left;">Số việc đúng tiến độ</td>
+                <td>${totalProgOnTimeQty}</td>
+                <td>${totalProgOnTimeConv.toFixed(1).replace('.', ',')}</td>
+                <td>0</td>
+                <td>${totalProgOnTimeConv.toFixed(2).replace('.', ',')}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+                <td style="text-align:left;">Số việc chậm tiến độ</td>
+                <td>${totalProgLateQty}</td>
+                <td>${totalProgLateConv.toFixed(1).replace('.', ',')}</td>
+                <td>${totalDelayCount}</td>
+                <td>${(progressNumerator - totalProgOnTimeConv).toFixed(2).replace('.', ',')}</td>
+            </tr>
+            <tr>
+                <td colspan="12" style="text-align:left; font-weight:bold;">
+                    Điểm tỷ lệ phần trăm (%) về tiến độ kết quả thực hiện nhiệm vụ = (11)/(7) = ${scoreC.toFixed(1).replace('.', ',')}%
+                </td>
+            </tr>
+        `;
+
+        // Đổ dữ liệu vào Phụ Lục 3[cite: 3]
+        document.querySelectorAll('.out_name').forEach(el => el.innerText = document.getElementById('info_name').value);
+        document.querySelectorAll('.out_party').forEach(el => el.innerText = document.getElementById('info_party').value);
+        document.querySelectorAll('.out_gov').forEach(el => el.innerText = document.getElementById('info_gov').value);
+        document.querySelectorAll('.out_org').forEach(el => el.innerText = document.getElementById('info_org').value);
+        document.querySelectorAll('.out_unit').forEach(el => el.innerText = document.getElementById('info_unit').value);
+        document.querySelectorAll('.out_period').forEach(el => el.innerText = document.getElementById('info_period').value);
+
+        document.querySelectorAll('.out_kpi_avg').forEach(el => el.innerText = scoreKPIAvg.toFixed(1) + '%');
+
+        // Phân bổ 6 Trục Phụ Lục 3[cite: 3]
+        const a1 = (scoreKPIAvg / 100) * 15;
+        const a2 = (scoreKPIAvg / 100) * 10;
+        const a3 = (scoreKPIAvg / 100) * 10;
+        const a4 = (scoreKPIAvg / 100) * 15;
+        const a5 = (scoreKPIAvg / 100) * 10;
+        const a6 = (scoreKPIAvg / 100) * 10;
+
+        document.getElementById('p3_axis1').innerText = a1.toFixed(2);
+        document.getElementById('p3_axis2').innerText = a2.toFixed(2);
+        document.getElementById('p3_axis3').innerText = a3.toFixed(2);
+        document.getElementById('p3_axis4').innerText = a4.toFixed(2);
+        document.getElementById('p3_axis5').innerText = a5.toFixed(2);
+        document.getElementById('p3_axis6').innerText = a6.toFixed(2);
+
+        document.getElementById('p3_total_B').innerText = scoreTask70.toFixed(2);
+        document.getElementById('p3_total_AB').innerText = totalScore.toFixed(2);
+
+        // Đề xuất xếp loại[cite: 3]
+        let rank = "";
+        if(totalScore >= 90) rank = "1- Hoàn thành xuất sắc nhiệm vụ";
+        else if(totalScore >= 75) rank = "2- Hoàn thành tốt nhiệm vụ";
+        else if(totalScore >= 50) rank = "3- Hoàn thành nhiệm vụ";
+        else rank = "4- Không hoàn thành nhiệm vụ";
+        document.getElementById('p3_rank').innerText = rank;
+    }
+
+    // Khởi chạy hệ thống
+    renderTaskInputTable();
+</script>
+</body>
+</html>
